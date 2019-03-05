@@ -18,27 +18,48 @@
     </head>
     <body>
         <div class="container">
-            <div class="row justify-content-center align-items-center">
+            <div class="row justify-content-center align-items-center vh-100">
                 <div class="col-12 text-center">
-                    <h1 class="text-center">fishing</h1>
+                    <h1 class="text-center">
+                        <small><i class="fas fa-fish"></i></small> fishing <small><i class="fas fa-fish fa-flip-horizontal"></i></small>
+                    </h1>
 
                     <p id="status">Go on, let's start fishing!</p>
 
-                    <button type="button" class="btn btn-outline-light" onclick="startFishing()">Start Fishing!</button>
+                    <button id="fishingButton" type="button" class="btn btn-outline-light">Start Fishing!</button>
                 </div>
             </div>
         </div>
 
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
         <script>
-            function startFishing() {
-                document.getElementById("status").innerHTML = "You caught something!";
-            }
+            $(document).ready(function(){
+                // Get fish-describing words from external files
+                var adjectives;
+                $.get("adjectives.txt", function(txtFile){
+                    adjectives = txtFile.split("\n");
+                });
+
+                $("#fishingButton").click(function(){
+                    // Pick a random adjective from the array of adjectives
+                    var randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+
+                    // Get a random value for the length of the fish within specified bounds
+                    var lengthMin = 4;
+                    var lengthMax = 48;
+                    var fishLength = Math.floor(Math.random() * (lengthMax - lengthMin + 1)) + lengthMin;
+
+                    // Display the caught fish!
+                    $("#status").html("You caught a " + randomAdjective + " fish!<br>(" + fishLength + " in.)");
+                });
+            });
+
+
         </script>
     </body>
 </html>
