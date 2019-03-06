@@ -26,7 +26,14 @@
 
                     <p id="status">Go on, let's start fishing!</p>
 
-                    <button id="fishingButton" type="button" class="btn btn-outline-light">Start Fishing!</button>
+                    <div id="fishingSpotDiv" class="col-xl-6 offset-xl-3 col-lg-6 offset-lg-3 col-md-8 offset-md-2 text-center">
+                        <label for="" class="float-left"><small>Close</small></label>
+                        <label for="" class="float-right"><small>Far</small></label>
+                        <input type="range" class="custom-range mb-3" min="0" max="100" step="1" id="fishingSpot">
+                    </div>
+
+                    <button id="fishingButton" type="button" class="btn btn-outline-light">Cast Line!</button>
+                    <button id="checkButton" type="button" class="btn btn-outline-light">Check for Fish</button>
                 </div>
             </div>
         </div>
@@ -39,27 +46,65 @@
 
         <script>
             $(document).ready(function(){
+                $("#fishingButton").hide();
+                $("#fishingSpotDiv").hide();
+
                 // Get fish-describing words from external files
                 var adjectives;
                 $.get("adjectives.txt", function(txtFile){
                     adjectives = txtFile.split("\n");
                 });
 
+                var pointMix = 0;
+                var pointMax = 100;
+                var fishPoint;
+
+                $("#checkButton").click(function(){
+                    // Get position on 1D area where the fish is located
+                    fishPoint = Math.floor(Math.random() * (pointMax - pointMix + 1)) + pointMix;
+
+                    if (fishPoint <= 20) {
+                        $("#status").html("There are ripples in the water...<br>The fish seem very close!");
+                    } else if (fishPoint > 20 && fishPoint <= 40) {
+                        $("#status").html("There are ripples in the water...<br>The fish seem somewhat close!");
+                    } else if (fishPoint > 40 && fishPoint < 60) {
+                        $("#status").html("There are ripples in the water...<br>The fish seem neither close nor far!");
+                    } else if (fishPoint >= 60 && fishPoint < 80) {
+                        $("#status").html("There are ripples in the water...<br>The fish seem somewhat far!");
+                    } else if (fishPoint >= 80) {
+                        $("#status").html("There are ripples in the water...<br>The fish seem very far!");
+                    }
+
+                    $("#checkButton").hide();
+                    $("#fishingButton").show();
+                    $("#fishingSpotDiv").show();
+                });
+
                 $("#fishingButton").click(function(){
-                    // Pick a random adjective from the array of adjectives
-                    var randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+                    var bobberPoint = $("#fishingSpot").val();
 
-                    // Get a random value for the length of the fish within specified bounds
-                    var lengthMin = 4;
-                    var lengthMax = 48;
-                    var fishLength = Math.floor(Math.random() * (lengthMax - lengthMin + 1)) + lengthMin;
+                    if (Math.abs(fishPoint - bobberPoint) <= 10) {
+                        // Pick a random adjective from the array of adjectives
+                        var randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
 
-                    // Display the caught fish!
-                    $("#status").html("You caught a " + randomAdjective + " fish!<br>(" + fishLength + " in.)");
+                        // Get a random value for the length of the fish within specified bounds
+                        var lengthMin = 4;
+                        var lengthMax = 48;
+                        var fishLength = Math.floor(Math.random() * (lengthMax - lengthMin + 1)) + lengthMin;
+
+                        // Display the caught fish!
+                        $("#status").html("<br>You caught a " + randomAdjective + " fish!<br>(" + fishLength + " in.)");
+                    } else {
+                        // Too far from fish!
+                        $("#status").html("<br>Nothing seems to be biting...");
+                    }
+
+                    $("#fishingButton").hide();
+                    $("#fishingSpotDiv").hide();
+                    $("#fishingSpot").val(50);
+                    $("#checkButton").show();
                 });
             });
-
-
         </script>
     </body>
 </html>
